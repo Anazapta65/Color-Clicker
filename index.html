@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Match Clicker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #targetColor {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 15px;
+      justify-content: center;
+    }
+    .square {
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    .square:hover {
+      transform: scale(1.1);
+    }
+    #score {
+      font-size: 20px;
+      margin: 15px 0;
+    }
+    #timer {
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Color Match Clicker</h1>
+  <div id="score">Score: 0</div>
+  <div id="targetColor">Click the color: <strong>Red</strong></div>
+  <div id="grid"></div>
+  <div id="timer">Time left: 5s</div>
+
+  <script>
+    const colors = ['Red', 'Green', 'Blue', 'Yellow', 'Orange', 'Purple'];
+    let score = 0;
+    let target = '';
+    let timer = 5;
+    let countdown;
+
+    const scoreDisplay = document.getElementById('score');
+    const targetColor = document.getElementById('targetColor');
+    const grid = document.getElementById('grid');
+    const timerDisplay = document.getElementById('timer');
+
+    function getRandomColor() {
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function generateGrid() {
+      grid.innerHTML = '';
+      for (let i = 0; i < 12; i++) {
+        const div = document.createElement('div');
+        const color = getRandomColor();
+        div.className = 'square';
+        div.style.backgroundColor = color.toLowerCase();
+        div.dataset.color = color;
+        div.onclick = () => handleClick(color);
+        grid.appendChild(div);
+      }
+    }
+
+    function setTarget() {
+      target = getRandomColor();
+      targetColor.innerHTML = `Click the color: <strong>${target}</strong>`;
+    }
+
+    function handleClick(clickedColor) {
+      if (clickedColor === target) {
+        score++;
+        scoreDisplay.textContent = `Score: ${score}`;
+        resetRound();
+      }
+    }
+
+    function resetRound() {
+      clearInterval(countdown);
+      timer = 5;
+      timerDisplay.textContent = `Time left: ${timer}s`;
+      setTarget();
+      generateGrid();
+      startTimer();
+    }
+
+    function startTimer() {
+      countdown = setInterval(() => {
+        timer--;
+        timerDisplay.textContent = `Time left: ${timer}s`;
+        if (timer === 0) {
+          clearInterval(countdown);
+          alert('Time’s up! Final score: ' + score);
+          location.reload(); // restart game
+        }
+      }, 1000);
+    }
+
+    // Start the game
+    setTarget();
+    generateGrid();
+    startTimer();
+  </script>
+</body>
+</html>
